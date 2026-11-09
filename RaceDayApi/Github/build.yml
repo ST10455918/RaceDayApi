@@ -1,4 +1,5 @@
 name: Build RaceDay POE
+#Build both projects
 
 on:
   push:
