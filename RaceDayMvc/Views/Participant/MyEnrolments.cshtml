@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "My Enrolments";
+}
+<h3>My Enrolments</h3>
+<div id="list" class="card shadow-sm p-3">Loading...</div>
+<script>
+    async function load() {
+        const userId = @Context.Session.GetInt32("UserId");
+        const apiBase = 'https://localhost:7164';
+        const res = await fetch(${ apiBase } / api / enrolments / user / ${ userId });
+        const data = await res.json();
+        let html = data.map(e => <div class="p-2 border-bottom" > Event ID: ${ e.eventId } | Status: ${ e.status } | Date: ${ new Date(e.enrolmentDate).toLocaleDateString() } </div>).join('');
+        document.getElementById('list').innerHTML = html || 'No enrolments yet';
+    }
+    load();
+</script>

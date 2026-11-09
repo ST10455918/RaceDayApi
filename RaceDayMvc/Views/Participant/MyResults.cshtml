@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "My Results";
+}
+<h3 class="fw-bold">My Race Results</h3>
+<div class="card shadow-sm p-3">
+    <table class="table"><thead><tr><th>Event</th><th>Position</th><th>Time</th><th>Ranking Display</th></tr></thead><tbody id="resultsTable"><tr><td colspan=4>Loading...</td></tr></tbody></table>
+</div>
+
+<script>
+    async function load() {
+        const userId = @Context.Session.GetInt32("UserId");
+        const apiBase = 'https://localhost:7164';
+        const res = await fetch(${ apiBase } / api / results / user / ${ userId });
+        const results = await res.json();
+        let html = '';
+        results.forEach(r => {
+            const pos = r.position;
+            const suffix = pos == 1 ? 'st' : pos == 2 ? 'nd' : pos == 3 ? 'rd' : 'th';
+            html += <tr><td>Enrolment #${ r.enrolmentId } </td><td><span class="badge bg-dark fs-6">${pos}${suffix}</span > </td><td>${r.finishTime}</td > <td class="fw-bold" style = "color:#FF6B00;" > ${ pos }${ suffix } out of 312 participants < /td></tr >;
+        });
+        if (results.length == 0) html = '<tr><td colspan=4>No results yet - organiser has not posted</td></tr>';
+        document.getElementById('resultsTable').innerHTML = html;
+    }
+    load();
+</script>

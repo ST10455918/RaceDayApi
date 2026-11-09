@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  racedayapi:
+    build:
+      context: .
+      dockerfile: RaceDayApi/Dockerfile
+    ports:
+      - "5001:80"
+  racedaymvc:
+    build:
+      context: .
+      dockerfile: RaceDayMvc/Dockerfile
+    ports:
+      - "5002:80"
+    depends_on:
+      - racedayapi

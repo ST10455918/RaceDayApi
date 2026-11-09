@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Events";
+}
+<h3 class="fw-bold">Available Races 🏁</h3>
+<p class="text-muted">Browse and enrol - filtering by search</p>
+
+<input id="searchBox" class="form-control mb-4" placeholder="Search events..." onkeyup="filter()" />
+
+<div class="row" id="eventsList"><p>Loading events...</p></div>
+
+<script>
+    let allEvents = [];
+    async function load() {
+        const apiBase = 'https://localhost:7164'; // CHANGE PORT
+        const res = await fetch(apiBase + '/api/events');
+        allEvents = await res.json();
+        render(allEvents);
+    }
+    function render(events) {
+        let html = '';
+        events.forEach(e => {
+            html +=`<div class="col-md-4 mb-3 event-card"><div class="card shadow-sm h-100">
+        <img src="${e.bannerImageUrl || 'https://via.placeholder.com/400x200?text=RaceDay'}" class="card-img-top" style="height:180px;object-fit:cover">
+        <div class="card-body"><h5>${e.name}</h5><p class="text-muted">${new Date(e.date).toLocaleDateString()}</p><p>${e.description || ''}</p>
+        <button onclick="enrol(${e.id})" class="btn btn-orange w-100">Enrol Now</button></div></div></div>`;
+        });
+        document.getElementById('eventsList').innerHTML = html || 'No events';
+    }
+    function filter() {
+        const q = document.getElementById('searchBox').value.toLowerCase();
+        render(allEvents.filter(e => e.name.toLowerCase().includes(q)));
+    }
+    async function enrol(eventId) {
+        const userId = @Context.Session.GetInt32("UserId");
+        const apiBase = 'https://localhost:7164';
+        const res = await fetch(apiBase + '/api/enrolments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: userId, eventId: eventId, categoryId: 1, status: "Confirmed" }) });
+        if (res.ok) alert('✅ Enrolled! Go to My Enrolments');
+        else alert('Already enrolled or error');
+    }
+    load();
+</script>

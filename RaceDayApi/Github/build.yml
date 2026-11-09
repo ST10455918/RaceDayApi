@@ -1,0 +1,29 @@
+name: Build RaceDay POE
+
+on:
+  push:
+    branches: [ "main", "part-3", "master" ]
+  pull_request:
+    branches: [ "main", "part-3" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore API
+      run: dotnet restore RaceDayApi/RaceDayApi.csproj
+    - name: Build API
+      run: dotnet build RaceDayApi/RaceDayApi.csproj --no-restore
+    - name: Restore MVC
+      run: dotnet restore RaceDayMvc/RaceDayMvc.csproj
+    - name: Build MVC
+      run: dotnet build RaceDayMvc/RaceDayMvc.csproj --no-restore
+    - name: Test API build
+      run: dotnet publish RaceDayApi/RaceDayApi.csproj -c Release
+    - name: Test MVC build
+      run: dotnet publish RaceDayMvc/RaceDayMvc.csproj -c Release

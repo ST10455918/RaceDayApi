@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fw-bold" style="color:#0A1931;">Organiser Dashboard</h2>
+    <a href="/Organiser/CreateEvent" class="btn btn-orange">+ Create Event</a>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3"><div class="card p-3 shadow-sm text-center"><h3 id="totalEvents">0</h3><small>Total Events</small></div></div>
+    <div class="col-md-3"><div class="card p-3 shadow-sm text-center"><h3 id="totalEnrolments">0</h3><small>Total Enrolments</small></div></div>
+    <div class="col-md-3"><div class="card p-3 shadow-sm text-center"><h3 id="totalCategories">0</h3><small>Categories</small></div></div>
+    <div class="col-md-3"><div class="card p-3 shadow-sm text-center"><h3 id="totalResults">0</h3><small>Results Posted</small></div></div>
+</div>
+
+<div class="card shadow-sm p-3">
+    <h5 class="fw-bold">My Events</h5>
+    <table class="table">
+        <thead><tr><th>Name</th><th>Date</th><th>Banner</th><th>Action</th></tr></thead>
+        <tbody id="eventsTable"><tr><td colspan="4">Loading...</td></tr></tbody>
+    </table>
+</div>
+
+<script>
+    async function load(){
+      // CHANGE PORT TO YOUR API PORT - check Swagger URL
+      const apiBase = 'https://localhost:7164';
+      try {
+        const res = await fetch(apiBase + '/api/events');
+        const events = await res.json();
+        document.getElementById('totalEvents').innerText = events.length;
+        let html='';
+        events.forEach(e=>{
+          html+=`<tr>
+            <td>${e.name}</td>
+            <td>${new Date(e.date).toLocaleDateString()}</td>
+            <td>${e.bannerImageUrl?<img src="${e.bannerImageUrl}" width="80" style="border-radius:8px">:'No banner'}</td>
+            <td><a href="/Organiser/Dashboard" class="btn btn-sm btn-outline-dark">View</a></td>
+          </tr>`;
+        });
+        document.getElementById('eventsTable').innerHTML = html || '<tr><td colspan=4>No events yet</td></tr>';
+      } catch(err){
+        document.getElementById('eventsTable').innerHTML = '<tr><td colspan=4>API not running - start RaceDayApi first</td></tr>';
+      }
+    }
+    load();
+</script>
