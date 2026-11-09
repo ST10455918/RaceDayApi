@@ -11,5 +11,7 @@
 
         public string? ProfileImageUrl { get; set; }
         public string? BannerImageUrl { get; set; } 
+
+
     }
 }
