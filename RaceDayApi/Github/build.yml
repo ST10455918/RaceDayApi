@@ -27,3 +27,4 @@ jobs:
       run: dotnet publish RaceDayApi/RaceDayApi.csproj -c Release
     - name: Test MVC build
       run: dotnet publish RaceDayMvc/RaceDayMvc.csproj -c Release
+
